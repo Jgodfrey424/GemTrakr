@@ -1,0 +1,179 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-chart">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-6 text-left">
+                            <h5 class="card-category">Product Cost vs Price</h5>
+                            <h3 class="card-title"><i class="tim-icons icon-chart-bar-32 text-primary"></i> Cost vs Price Overview</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="chartBig1"></canvas>  <!-- ✅ Keep the existing chart ID -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- 🔥 Move Inventory List to its own Section -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title"> Inventory List</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table tablesorter">
+                            <thead class=" text-primary">
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Location</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in inventory %}
+                                <tr>
+                                    <td>{{ item.title }}</td>
+                                    <td>{{ item.description }}</td>
+                                    <td>{{ item.item_location }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>${{ item.price }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info">View</button>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No inventory items found.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 Task List -->
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <div class="card card-tasks">
+                <div class="card-header">
+                    <h6 class="title d-inline">Tasks</h6>
+                    <p class="card-category d-inline">Today</p>
+                </div>
+                <div class="card-body">
+                    <div class="table-full-width table-responsive">
+                        <table class="table">
+                            <tbody>
+                                {% for task in tasks %}
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input class="form-check-input" type="checkbox" value="" {% if task.completed %}checked{% endif %}>
+                                                <span class="form-check-sign">
+                                                    <span class="check"></span>
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="title">{{ task.title }}</p>
+                                        <p class="text-muted">{{ task.description }}</p>
+                                    </td>
+                                    <td class="td-actions text-right">
+                                        <button type="button" rel="tooltip" title="Edit Task" class="btn btn-link">
+                                            <i class="tim-icons icon-pencil"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">
+                                        No tasks found.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ctx = document.getElementById("chartBig1").getContext("2d");
+
+        var chartBig1 = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: {{ chart_data.titles | tojson | safe }},  // Product names
+                datasets: [
+                    {
+                        label: "Cost",
+                        backgroundColor: "rgba(54, 162, 235, 0.7)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderWidth: 1,
+                        data: {{ chart_data.costs | tojson | safe }},
+                    },
+                    {
+                        label: "Price",
+                        backgroundColor: "rgba(75, 192, 192, 0.7)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1,
+                        data: {{ chart_data.prices | tojson | safe }},
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: "top",
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+{% endblock javascripts %}
