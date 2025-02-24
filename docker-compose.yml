@@ -22,8 +22,7 @@ services:
       - ./apps/armortech-firebase-adminsdk-prgtn-de3fba45cf.json:/app/armortech-firebase-adminsdk-prgtn-de3fba45cf.json
     
     networks:
-  web_network:
-    driver: bridge
+      - web_network
 
 
   nginx:
