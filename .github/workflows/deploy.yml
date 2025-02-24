@@ -1,0 +1,60 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Runs only when pushing to the main branch
+
+env:
+  PROJECT_ID: armortech  # GCP Project ID
+  SERVICE_NAME: gemtrackr-app  # Cloud Run Service Name
+  REGION: us-central1  # Change to your preferred region
+  GAR_REPO: gemtrackr-repo  # Google Artifact Registry Repo Name
+  IMAGE: gemtrackr-app  # Docker image name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      # 3️⃣ Set up Google Cloud SDK
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      # 4️⃣ Configure Docker to use Artifact Registry
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      # 5️⃣ Build & Push Docker Image to Google Artifact Registry
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPO }}/${{ env.IMAGE }}:latest .
+          docker push us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPO }}/${{ env.IMAGE }}:latest
+
+      # 6️⃣ Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image=us-central1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.GAR_REPO }}/${{ env.IMAGE }}:latest \
+            --platform=managed \
+            --region=${{ env.REGION }} \
+            --allow-unauthenticated \
+            --memory=512Mi \
+            --cpu=1 \
+            --port=5000 \
+            --set-env-vars=FLASK_ENV=production \
+            --set-env-vars=GOOGLE_APPLICATION_CREDENTIALS=/secrets/firebase_creds.json \
+            --timeout=60s
