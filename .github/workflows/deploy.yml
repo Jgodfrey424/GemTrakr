@@ -17,6 +17,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Debug GitHub OIDC Token
+        run: |
+          echo "Running in GitHub Repository: $GITHUB_REPOSITORY"
+          echo "GitHub Actor: $GITHUB_ACTOR"
+          curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+               "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://iam.googleapis.com" | jq .
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+
       - name: Authenticate with Workload Identity Federation
         uses: google-github-actions/auth@v2
         with:
