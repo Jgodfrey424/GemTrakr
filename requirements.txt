@@ -16,4 +16,5 @@ Flask-Minify==0.37
 Flask-Dance==5.1.0
 blinker==1.4
 pyOpenSSL
+google-cloud-secret-manager
 # flask_mysqldb

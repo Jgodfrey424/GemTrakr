@@ -14,7 +14,8 @@ venv
 # Ignore sensitive Firebase credentials & environment files
 .env
 credentials/
-
+apps/armortech-firebase-adminsdk-prgtn-de3fba45cf.json
+firebase_creds.json
 
 # other
 .DS_Store

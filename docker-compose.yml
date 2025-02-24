@@ -1,27 +1,45 @@
-version: '3.8'
+version: "3.8"
+
 services:
-  appseed-app:
-    container_name: appseed_app
+  app:
+    container_name: gemtrackr_app
     restart: always
     build: .
+    env_file:
+      - .env  # Ensure project ID is set
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=run.py
+      - PROJECT_ID=armortech
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/armortech-firebase-adminsdk-prgtn-de3fba45cf.json
+
+    entrypoint: >
+      sh -c "python apps/get_and_write_creds.py && python run.py"
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - ./apps/armortech-firebase-adminsdk-prgtn-de3fba45cf.json:/app/armortech-firebase-adminsdk-prgtn-de3fba45cf.json
+    
     networks:
-      - db_network
-      - web_network
+  web_network:
+    driver: bridge
+
+
   nginx:
     container_name: nginx
     restart: always
     image: "nginx:latest"
     ports:
+      - "80:80" 
       - "5085:5085"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx.conf:/nginx/conf.d/default.conf:ro 
     networks:
       - web_network
-    depends_on: 
-      - appseed-app
+    depends_on:
+      - app
+
 networks:
-  db_network:
-    driver: bridge
   web_network:
     driver: bridge
- 
