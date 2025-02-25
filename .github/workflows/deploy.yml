@@ -58,7 +58,8 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: armortech
-          version: 'latest'
+          version: '511.0.0' # Replace with the latest version
+          install_components: 'gcloud-components'
 
       - name: Deploy to Cloud Run
         run: |
