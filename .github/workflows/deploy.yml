@@ -11,7 +11,7 @@ jobs:
 
     permissions:
       id-token: write  # Required for Workload Identity Federation
-      contents: read   # Allows GitHub Actions to read the repo contents
+      contents: read  # Allows GitHub Actions to read the repo contents
 
     steps:
       - name: Checkout code
@@ -30,6 +30,11 @@ jobs:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
           ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
 
+      - name: Debug Workspace
+        run: |
+          echo "Workspace: $GITHUB_WORKSPACE"
+          ls -l $GITHUB_WORKSPACE/.github/actions
+
       - name: Authenticate with Workload Identity Federation
         uses: google-github-actions/auth@v2
         with:
@@ -42,7 +47,15 @@ jobs:
           echo "Ref: ${{ github.ref }}"
           echo "Workflow: ${{ github.workflow }}"
           echo "Actor: ${{ github.actor }}"
-          
+
+      - name: Check Active Account
+        run: gcloud auth list
+
+      - name: Activate Service Account
+        run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/GemTrakr/GemTrakr/gha-creds-*.json
+
       - name: Check Active Account
         run: gcloud auth list
 
