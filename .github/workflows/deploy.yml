@@ -48,9 +48,7 @@ jobs:
 
       - name: Activate Service Account
         run: gcloud auth activate-service-account --key-file=$GOOGLE_GHA_CREDS_PATH
-        env:
-          GOOGLE_GHA_CREDS_PATH: /home/runner/work/GemTrakr/GemTrakr/gha-creds-b617d3143995fff5.json
-
+        
       - name: Check Active Account (After Activate)
         run: gcloud auth list
 
