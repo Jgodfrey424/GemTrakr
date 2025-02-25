@@ -46,13 +46,11 @@ jobs:
       - name: Check Active Account (After Auth)
         run: gcloud auth list
 
-      - name: Debug GHA Creds Path
-        run: |
-          echo "GOOGLE_GHA_CREDS_PATH: $GOOGLE_GHA_CREDS_PATH"
-      - name: Print Credentials File
-        run: cat $GOOGLE_GHA_CREDS_PATH
-      - name: Activate Service Account
-        run: gcloud auth activate-service-account --key-file=$GOOGLE_GHA_CREDS_PATH
+      - name: Configure Credentials
+        run: gcloud auth configure-credentials --quiet
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_GHA_CREDS_PATH
+
       - name: Check Active Account (After Activate)
         run: gcloud auth list
 
