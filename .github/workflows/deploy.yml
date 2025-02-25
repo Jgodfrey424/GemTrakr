@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check Active Account
+      - name: Check Active Account (Before Auth)
         run: gcloud auth list
 
       - name: Debug GitHub OIDC Token
@@ -48,7 +48,7 @@ jobs:
           echo "Workflow: ${{ github.workflow }}"
           echo "Actor: ${{ github.actor }}"
 
-      - name: Check Active Account
+      - name: Check Active Account (After Auth)
         run: gcloud auth list
 
       - name: Activate Service Account
@@ -56,7 +56,7 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: /home/runner/work/GemTrakr/GemTrakr/gha-creds-*.json
 
-      - name: Check Active Account
+      - name: Check Active Account (After Activate)
         run: gcloud auth list
 
       - name: Set up Google Cloud SDK
