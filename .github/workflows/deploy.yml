@@ -30,11 +30,6 @@ jobs:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
           ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
 
-      - name: Debug Workspace
-        run: |
-          echo "Workspace: $GITHUB_WORKSPACE"
-          ls -l $GITHUB_WORKSPACE/.github/actions
-
       - name: Authenticate with Workload Identity Federation
         uses: google-github-actions/auth@v2
         with:
