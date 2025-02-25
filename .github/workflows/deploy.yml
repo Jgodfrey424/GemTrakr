@@ -25,7 +25,7 @@ jobs:
           echo "Running in GitHub Repository: $GITHUB_REPOSITORY"
           echo "GitHub Actor: $GITHUB_ACTOR"
           curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-               "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://iam.googleapis.com" | jq .
+               "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://iam.googleapis.com/projects/961525812802/locations/global/workloadIdentityPools/gemtrakr-pool/providers/gemtrakr-provider" | jq .
         env:
           ACTIONS_ID_TOKEN_REQUEST_URL: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_URL }}
           ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ secrets.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
@@ -35,6 +35,7 @@ jobs:
         with:
           workload_identity_provider: "projects/961525812802/locations/global/workloadIdentityPools/gemtrakr-pool/providers/gemtrakr-provider"
           service_account: "github-action-828023681@armortech.iam.gserviceaccount.com"
+          audience: "https://iam.googleapis.com/projects/961525812802/locations/global/workloadIdentityPools/gemtrakr-pool/providers/gemtrakr-provider"
 
       - name: Debug GitHub Context
         run: |
